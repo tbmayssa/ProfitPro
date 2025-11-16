@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input.error {
+            border-color: #e74c3c;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .reset-btn {
+            background: #f0f0f0;
+            color: #555;
+        }
+
+        .reset-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: #555;
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .profit-positive {
+            color: #27ae60;
+        }
+
+        .profit-negative {
+            color: #e74c3c;
+        }
+
+        .currency-symbol {
+            color: #667eea;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Profit Calculator</h1>
+        <p class="subtitle">Calculate your profit margins with ease</p>
+
+        <div class="input-group">
+            <label for="costPrice">Cost Price ($)</label>
+            <input type="number" id="costPrice" placeholder="Enter cost price" step="0.01" min="0">
+            <div class="error-message" id="costError">Please enter a valid cost price</div>
+        </div>
+
+        <div class="input-group">
+            <label for="sellingPrice">Selling Price ($)</label>
+            <input type="number" id="sellingPrice" placeholder="Enter selling price" step="0.01" min="0">
+            <div class="error-message" id="sellingError">Please enter a valid selling price</div>
+        </div>
+
+        <div class="input-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" placeholder="Enter quantity" step="1" min="1">
+            <div class="error-message" id="quantityError">Please enter a valid quantity (minimum 1)</div>
+        </div>
+
+        <div class="button-group">
+            <button class="calculate-btn" onclick="calculateProfit()">Calculate</button>
+            <button class="reset-btn" onclick="resetCalculator()">Reset</button>
+        </div>
+
+        <div class="results" id="results">
+            <h2>Results</h2>
+            <div class="result-item">
+                <span class="result-label">Total Cost:</span>
+                <span class="result-value"><span class="currency-symbol">$</span><span id="totalCost">0.00</span></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Total Revenue:</span>
+                <span class="result-value"><span class="currency-symbol">$</span><span id="totalRevenue">0.00</span></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Total Profit:</span>
+                <span class="result-value" id="totalProfitValue"><span class="currency-symbol">$</span><span id="totalProfit">0.00</span></span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Profit Margin:</span>
+                <span class="result-value" id="profitMarginValue"><span id="profitMargin">0.00</span>%</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateInputs() {
+            let isValid = true;
+
+            const costPrice = document.getElementById('costPrice');
+            const sellingPrice = document.getElementById('sellingPrice');
+            const quantity = document.getElementById('quantity');
+
+            const costError = document.getElementById('costError');
+            const sellingError = document.getElementById('sellingError');
+            const quantityError = document.getElementById('quantityError');
+
+            // Reset error states
+            costPrice.classList.remove('error');
+            sellingPrice.classList.remove('error');
+            quantity.classList.remove('error');
+            costError.classList.remove('show');
+            sellingError.classList.remove('show');
+            quantityError.classList.remove('show');
+
+            // Validate cost price
+            if (!costPrice.value || parseFloat(costPrice.value) < 0) {
+                costPrice.classList.add('error');
+                costError.classList.add('show');
+                isValid = false;
+            }
+
+            // Validate selling price
+            if (!sellingPrice.value || parseFloat(sellingPrice.value) < 0) {
+                sellingPrice.classList.add('error');
+                sellingError.classList.add('show');
+                isValid = false;
+            }
+
+            // Validate quantity
+            if (!quantity.value || parseInt(quantity.value) < 1) {
+                quantity.classList.add('error');
+                quantityError.classList.add('show');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function calculateProfit() {
+            if (!validateInputs()) {
+                return;
+            }
+
+            const costPrice = parseFloat(document.getElementById('costPrice').value);
+            const sellingPrice = parseFloat(document.getElementById('sellingPrice').value);
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            // Calculations
+            const totalCost = costPrice * quantity;
+            const totalRevenue = sellingPrice * quantity;
+            const totalProfit = totalRevenue - totalCost;
+            const profitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+
+            // Display results
+            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+            document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(2);
+            document.getElementById('totalProfit').textContent = totalProfit.toFixed(2);
+            document.getElementById('profitMargin').textContent = profitMargin.toFixed(2);
+
+            // Color code profit
+            const totalProfitElement = document.getElementById('totalProfitValue');
+            const profitMarginElement = document.getElementById('profitMarginValue');
+
+            if (totalProfit >= 0) {
+                totalProfitElement.classList.remove('profit-negative');
+                totalProfitElement.classList.add('profit-positive');
+                profitMarginElement.classList.remove('profit-negative');
+                profitMarginElement.classList.add('profit-positive');
+            } else {
+                totalProfitElement.classList.remove('profit-positive');
+                totalProfitElement.classList.add('profit-negative');
+                profitMarginElement.classList.remove('profit-positive');
+                profitMarginElement.classList.add('profit-negative');
+            }
+
+            // Show results
+            document.getElementById('results').classList.add('show');
+        }
+
+        function resetCalculator() {
+            // Clear all inputs
+            document.getElementById('costPrice').value = '';
+            document.getElementById('sellingPrice').value = '';
+            document.getElementById('quantity').value = '';
+
+            // Clear error states
+            document.getElementById('costPrice').classList.remove('error');
+            document.getElementById('sellingPrice').classList.remove('error');
+            document.getElementById('quantity').classList.remove('error');
+            document.getElementById('costError').classList.remove('show');
+            document.getElementById('sellingError').classList.remove('show');
+            document.getElementById('quantityError').classList.remove('show');
+
+            // Hide results
+            document.getElementById('results').classList.remove('show');
+        }
+
+        // Allow Enter key to calculate
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculateProfit();
+            }
+        });
+    </script>
+</body>
+</html>

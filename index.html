@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfitPro - Professional Profit Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <span>ProfitPro</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="container">
+                <div class="calculator-grid">
+                    <!-- Calculator Card -->
+                    <div class="card calculator-card">
+                        <h2 class="card-title">
+                            <i class="fas fa-calculator"></i>
+                            Profit Calculator
+                        </h2>
+
+                        <!-- Currency Selector -->
+                        <div class="input-group">
+                            <label for="currency">
+                                <i class="fas fa-dollar-sign"></i>
+                                Currency
+                            </label>
+                            <select id="currency">
+                                <option value="USD" data-symbol="$">USD - US Dollar</option>
+                                <option value="EUR" data-symbol="€">EUR - Euro</option>
+                                <option value="GBP" data-symbol="£">GBP - British Pound</option>
+                                <option value="TND" data-symbol="د.ت">TND - Tunisian Dinar</option>
+                                <option value="SAR" data-symbol="﷼">SAR - Saudi Riyal</option>
+                                <option value="CLP" data-symbol="$">CLP - Chilean Peso</option>
+                                <option value="JPY" data-symbol="¥">JPY - Japanese Yen</option>
+                                <option value="AUD" data-symbol="A$">AUD - Australian Dollar</option>
+                            </select>
+                        </div>
+
+                        <!-- Basic Inputs -->
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="costPrice">
+                                    <i class="fas fa-tag"></i>
+                                    Cost Price
+                                </label>
+                                <input type="number" id="costPrice" placeholder="0.00" step="0.01" min="0">
+                                <span class="error-message" id="costError">Invalid cost price</span>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="sellingPrice">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    Selling Price
+                                </label>
+                                <input type="number" id="sellingPrice" placeholder="0.00" step="0.01" min="0">
+                                <span class="error-message" id="sellingError">Invalid selling price</span>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="quantity">
+                                    <i class="fas fa-boxes"></i>
+                                    Quantity
+                                </label>
+                                <input type="number" id="quantity" placeholder="1" step="1" min="1">
+                                <span class="error-message" id="quantityError">Minimum quantity is 1</span>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="vat">
+                                    <i class="fas fa-percent"></i>
+                                    VAT/Tax (%)
+                                </label>
+                                <input type="number" id="vat" placeholder="0" step="0.01" min="0" max="100" value="0">
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="discount">
+                                    <i class="fas fa-percentage"></i>
+                                    Discount (%)
+                                </label>
+                                <input type="number" id="discount" placeholder="0" step="0.01" min="0" max="100" value="0">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="shipping">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    Shipping/Fees
+                                </label>
+                                <input type="number" id="shipping" placeholder="0.00" step="0.01" min="0" value="0">
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="calculateProfit()">
+                                <i class="fas fa-calculator"></i>
+                                Calculate
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetCalculator()">
+                                <i class="fas fa-redo"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Results Card -->
+                    <div class="card results-card" id="resultsCard">
+                        <h2 class="card-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Results
+                        </h2>
+
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <div class="result-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="result-info">
+                                    <span class="result-label">Total Cost</span>
+                                    <span class="result-value" id="totalCost">0.00</span>
+                                </div>
+                            </div>
+
+                            <div class="result-item">
+                                <div class="result-icon">
+                                    <i class="fas fa-cash-register"></i>
+                                </div>
+                                <div class="result-info">
+                                    <span class="result-label">Total Revenue</span>
+                                    <span class="result-value" id="totalRevenue">0.00</span>
+                                </div>
+                            </div>
+
+                            <div class="result-item highlight">
+                                <div class="result-icon">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                </div>
+                                <div class="result-info">
+                                    <span class="result-label">Total Profit</span>
+                                    <span class="result-value" id="totalProfit">0.00</span>
+                                </div>
+                            </div>
+
+                            <div class="result-item highlight">
+                                <div class="result-icon">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <div class="result-info">
+                                    <span class="result-label">Profit Margin</span>
+                                    <span class="result-value" id="profitMargin">0.00%</span>
+                                </div>
+                            </div>
+
+                            <div class="result-item">
+                                <div class="result-icon">
+                                    <i class="fas fa-receipt"></i>
+                                </div>
+                                <div class="result-info">
+                                    <span class="result-label">Final Price (After Tax)</span>
+                                    <span class="result-value" id="finalPrice">0.00</span>
+                                </div>
+                            </div>
+
+                            <div class="result-item">
+                                <div class="result-icon">
+                                    <i class="fas fa-tags"></i>
+                                </div>
+                                <div class="result-info">
+                                    <span class="result-label">After Discount</span>
+                                    <span class="result-value" id="afterDiscount">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-download" onclick="downloadPDF()">
+                            <i class="fas fa-file-pdf"></i>
+                            Download PDF Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-container" id="chartsContainer">
+                    <div class="card chart-card">
+                        <h3 class="chart-title">Cost vs Revenue</h3>
+                        <canvas id="costRevenueChart"></canvas>
+                    </div>
+                    <div class="card chart-card">
+                        <h3 class="chart-title">Profit Distribution</h3>
+                        <canvas id="profitChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- History Section -->
+                <div class="card history-card" id="historyCard">
+                    <div class="history-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-history"></i>
+                            Calculation History
+                        </h2>
+                        <button class="btn btn-sm btn-danger" onclick="clearHistory()">
+                            <i class="fas fa-trash"></i>
+                            Clear History
+                        </button>
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <p class="empty-state">No calculations yet. Start calculating to see history.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <div class="container">
+                <div class="content-card">
+                    <h1 class="page-title">
+                        <i class="fas fa-info-circle"></i>
+                        About ProfitPro
+                    </h1>
+                    <div class="about-content">
+                        <p>
+                            ProfitPro is a comprehensive, professional-grade profit calculator designed for businesses,
+                            entrepreneurs, and financial professionals. Our mission is to make profit analysis simple,
+                            accurate, and accessible to everyone.
+                        </p>
+
+                        <h2>Key Features</h2>
+                        <ul class="features-list">
+                            <li><i class="fas fa-check-circle"></i> Advanced profit and margin calculations</li>
+                            <li><i class="fas fa-check-circle"></i> Support for VAT/Tax and discount calculations</li>
+                            <li><i class="fas fa-check-circle"></i> Multi-currency support (8+ currencies)</li>
+                            <li><i class="fas fa-check-circle"></i> Interactive charts and visualizations</li>
+                            <li><i class="fas fa-check-circle"></i> Calculation history tracking</li>
+                            <li><i class="fas fa-check-circle"></i> PDF report generation</li>
+                            <li><i class="fas fa-check-circle"></i> Light and dark mode themes</li>
+                            <li><i class="fas fa-check-circle"></i> Fully responsive design</li>
+                        </ul>
+
+                        <h2>How It Works</h2>
+                        <p>
+                            Simply enter your cost price, selling price, and quantity, along with any applicable taxes,
+                            discounts, and fees. ProfitPro will instantly calculate your total cost, revenue, profit,
+                            and profit margin. View your results in beautiful charts, download detailed reports,
+                            and keep track of all your calculations in the history section.
+                        </p>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <i class="fas fa-users"></i>
+                                <h3>10,000+</h3>
+                                <p>Active Users</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-calculator"></i>
+                                <h3>100,000+</h3>
+                                <p>Calculations</p>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-globe"></i>
+                                <h3>50+</h3>
+                                <p>Countries</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section">
+            <div class="container">
+                <div class="content-card">
+                    <h1 class="page-title">
+                        <i class="fas fa-envelope"></i>
+                        Contact Us
+                    </h1>
+                    <div class="contact-content">
+                        <p>
+                            We'd love to hear from you! Whether you have questions, feedback, or need support,
+                            feel free to reach out to us.
+                        </p>
+
+                        <form class="contact-form" onsubmit="handleContactSubmit(event)">
+                            <div class="input-group">
+                                <label for="contactName">
+                                    <i class="fas fa-user"></i>
+                                    Name
+                                </label>
+                                <input type="text" id="contactName" placeholder="Your name" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="contactEmail">
+                                    <i class="fas fa-envelope"></i>
+                                    Email
+                                </label>
+                                <input type="email" id="contactEmail" placeholder="your.email@example.com" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="contactSubject">
+                                    <i class="fas fa-tag"></i>
+                                    Subject
+                                </label>
+                                <input type="text" id="contactSubject" placeholder="How can we help?" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="contactMessage">
+                                    <i class="fas fa-comment"></i>
+                                    Message
+                                </label>
+                                <textarea id="contactMessage" rows="6" placeholder="Your message..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                                Send Message
+                            </button>
+                        </form>
+
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <h4>Email</h4>
+                                    <p>support@profitpro.com</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <h4>Phone</h4>
+                                    <p>+1 (555) 123-4567</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <h4>Location</h4>
+                                    <p>123 Business Ave, Suite 100<br>New York, NY 10001</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <i class="fas fa-chart-line"></i>
+                        <span>ProfitPro</span>
+                    </div>
+                    <p>Your professional profit calculation companion.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ProfitPro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
